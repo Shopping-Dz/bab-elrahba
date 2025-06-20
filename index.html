@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link type="image/png" sizes="96x96" rel="icon" href="icon/icons8-shop-100 (1).png">
+  <title>Bab ElRahba - باب الرحبة</title>
+  <link rel="stylesheet" href="css/btn-styles.css">
+  <link rel="stylesheet" href="css/Main.css">
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("IuCv8xZ4_8k3ps9aH");
+    })();
+  </script>
+</head>
+<body>
+<header>
+  <h1><img src="icon/icons8-shop-100 (1).png" width="50px" style="position: relative; top: 15px;">باب الرحبة</h1>
+  <nav>
+    <ul>
+      <li><a href="#Home">home<i class='bx bxs-home'></i></a></li>
+      <li><a href="#Card" id="showcart">Card<strong id="max">0</strong><i class='bx bxs-cart-alt'></i></a></li>
+      <li><a href="acconte.html">Login<i class='bx bxs-log-in'></i></a></li>
+      <li style="display: none;" ><a href="#user" >Accont<i class='bx bxs-user-rectangle'></i></a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="cart" id="cart">
+    <a href="#close card" style="color: red; position: relative; left: -90%; font-size: 30px;" id="hidecart"><i class='bx bx-x-circle'></i></a>
+  <h3>سلة المشتريات</h3>
+  <div id="cart-items"></div>
+  <form class="checkout-form" onsubmit="sendOrder(event)">
+    <input type="text" id="name" placeholder="الاسم الكامل" required />
+    <input type="text" id="phone" placeholder="رقم الهاتف" required />
+    <select id="wilaya" class="select" selected="">
+      <option value="">اختر ولاية</option>
+      <option value="01">أدرار</option>
+      <option value="02">الشلف</option>
+      <option value="03">الأغواط</option>
+      <option value="04">أم البواقي</option>
+      <option value="05">باتنة</option>
+      <option value="06">بجاية</option>
+      <option value="07">بسكرة</option>
+      <option value="08">بشار</option>
+      <option value="09">البليدة</option>
+    </select>
+    <select id="commune" class="select">
+      <option value="">اختر بلدية</option>
+    </select>
+    <textarea id="address" placeholder="ان لم تجد عنوانك ادخله هنا" required></textarea>
+    
+<button type="submit" class="sndbutton">
+  <div class="svg-wrapper-1">
+    <div class="svg-wrapper">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+      >
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path
+          fill="currentColor"
+          d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+        ></path>
+      </svg>
+    </div>
+  </div>
+  <span>ارسال الطلب</span>
+</button>
+<div id="message"></div>
+  </form>
+</div>
+
+<section class="section" id="products">
+  <h2 class="section-title">منتجاتي</h2>
+  <div class="products" id="product-list"></div>
+</section>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="JS/Main.js"></script>
+<script src="JS/Wilaya.js"></script>
+<script src="JS/firebase.js" type="module"></script>
+</body>
+</html>

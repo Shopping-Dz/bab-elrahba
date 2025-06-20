@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تسجيل الدخول / إنشاء حساب</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100%;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    orange 0,
+    transparent 30px,
+    orangered 30px,
+    transparent 60px,
+    orange 120px,
+    transparent 240px
+  );
+  background-color: orange;
+}
+
+    header{
+      position: relative;
+      top: 0;
+      margin: 0;
+    }
+    /* From Uiverse.io by nathann09 */ 
+.form {
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+  display: block;
+  padding: 1rem;
+  width: 350px;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.form-title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  color: #000;
+}
+
+.input-container {
+  position: relative;
+}
+
+.input-container input, .form button {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #000;
+  outline: none;
+  border: 1px solid #e5e7eb;
+  margin: 8px 0;
+}
+.form button{
+  cursor: pointer;
+}
+
+.input-container input {
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 1rem 5px;
+  margin-right: 10px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  width: 95%;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.submit {
+  display: block;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  background-color: #4F46E5;
+  color: #ffffff;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  width: 100%;
+  border-radius: 0.5rem;
+  text-transform: uppercase;
+}
+
+.signup-link {
+  color: #6B7280;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+.signup-link a {
+  text-decoration: underline;
+}
+
+    #message {
+      margin-top: 10px;
+      color: green;
+    }
+    #full-name {
+      display: none;
+    }
+/* From Uiverse.io by Yaya12085 */ 
+.submit {
+  max-width: 400px;
+  display: flex;
+  padding: 0.5rem 1.4rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  vertical-align: middle;
+  align-items: center;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  gap: 0.75rem;
+  color: rgb(65, 63, 63);
+  background-color: #fff;
+  cursor: pointer;
+  transition: all .6s ease;
+}
+
+.submit svg {
+  height: 24px;
+}
+
+.submit:hover {
+  transform: scale(1.02);
+}
+  </style>
+</head>
+<body>
+<!-- From Uiverse.io by jaykdoe --> 
+<div class="container"></div>
+
+<form class="form">
+    <p class="form-title" id="form-title">Sign in to your account</p>
+    <div class="input-container">
+        <input type="text" id="full-name" placeholder="الاسم الكامل" />
+        <span>
+
+        </span>
+    </div>
+     <div class="input-container">
+        <input type="email" id="email" placeholder="البريد الإلكتروني" />
+       <span>
+       </span>
+   </div>
+   <div class="input-container">
+    <input type="password" id="password" placeholder="كلمة المرور" />
+     </div>
+      <button id="submit" class="submit">
+        دخول
+   </button>
+
+   <p class="signup-link">
+     <a href="#" id="toggle-mode">ليس لديك حساب؟ أنشئ واحدًا</a>
+     <div id="message"></div>
+   </p>
+   <button onclick="signInWithGoogle()">تسجيل الدخول</button>
+</form>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC2hgjiIh3nomKm2jFZpR1PWk0O3OGiEDA",
+    authDomain: "babrahbashop.firebaseapp.com",
+    projectId: "babrahbashop",
+    storageBucket: "babrahbashop.firebasestorage.app",
+    messagingSenderId: "76258426177",
+    appId: "1:76258426177:web:335deb41d4efa8cd9435c0",
+    measurementId: "G-S9KC921TFV"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database(); 
+
+  let isLogin = true;
+
+  const fullNameInput = document.getElementById("full-name");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const message = document.getElementById("message");
+
+  document.getElementById("toggle-mode").onclick = () => {
+    isLogin = !isLogin;
+    document.getElementById("form-title").textContent = isLogin ? "تسجيل الدخول" : "إنشاء حساب";
+    document.getElementById("submit").textContent = isLogin ? "دخول" : "تسجيل";
+    document.getElementById("toggle-mode").textContent = isLogin ? "ليس لديك حساب؟ أنشئ واحدًا" : "هل لديك حساب؟ تسجيل الدخول";
+    fullNameInput.style.display = isLogin ? "none" : "block";
+    message.textContent = "";
+  };
+
+  document.getElementById("submit").onclick = async () => {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    const fullName = fullNameInput.value.trim();
+
+    if (!email || !password || (!isLogin && !fullName)) {
+      message.textContent = "يرجى ملء جميع الحقول المطلوبة.";
+      message.style.color = "red";
+      return;
+    }
+
+    try {
+      if (isLogin) {
+        await auth.signInWithEmailAndPassword(email, password);
+        message.textContent = "تم تسجيل الدخول بنجاح";
+        message.style.color = "green";
+        window.location.href = `index.html?email=${email}&&userislogged`;
+        localStorage.setItem("username", user.displayName);
+        localStorage.setItem("userisloggin", true);
+      } else {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        await userCredential.user.updateProfile({ displayName: fullName });
+        message.textContent = "تم إنشاء الحساب وتحديث الاسم بنجاح";
+        message.style.color = "green";
+        localStorage.setItem("username", fullName);
+        localStorage.setItem("userisloggin", true);
+      }
+    } catch (error) {
+      message.textContent = "خطأ: " + error.message;
+      message.style.color = "red";
+      localStorage.setItem("userisloggin", false);
+    }
+  };
+
+
+
+  function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        const user = result.user;
+        // حفظ البيانات في Realtime Database
+        db.ref("users/" + user.uid).set({
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL
+        });
+        // حفظ في localStorage
+        localStorage.setItem("uid", user.uid);
+        window.location.href = "profile.html";
+      })
+      .catch((error) => {
+        console.error("فشل تسجيل الدخول:", error.message);
+      });
+  }
+</script>
+</body>
+</html>

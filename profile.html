@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>الملف الشخصي</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      color: #333;
+    }
+
+    .profile-card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .profile-card img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .profile-card h2 {
+      margin: 15px 0 5px;
+      font-size: 24px;
+      color: #222;
+    }
+
+    .profile-card p {
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 90%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      background: #4a90e2;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #357ab8;
+    }
+
+    .link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #4a90e2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .logout-btn {
+      margin-top: 30px;
+      background: #e74c3c;
+    }
+
+    .logout-btn:hover {
+      background: #c0392b;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="profile-card">
+    <img id="photo" src="" alt="صورة الملف">
+    <h2 id="name">جاري التحميل...</h2>
+    <p id="email"></p>
+
+    <input type="text" id="newName" placeholder="أدخل اسم جديد">
+    <button onclick="updateName()">تحديث الاسم</button>
+
+    <input type="file" id="newPhoto">
+    <button onclick="uploadPhoto()">تحميل صورة جديدة</button>
+
+    <a class="link" href="dashboard.html">الذهاب إلى لوحة التحكم</a>
+    <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+  </div>
+
+  <script>
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC2hgjiIh3nomKm2jFZpR1PWk0O3OGiEDA",
+    authDomain: "babrahbashop.firebaseapp.com",
+    projectId: "babrahbashop",
+    storageBucket: "babrahbashop.firebasestorage.app",
+    messagingSenderId: "76258426177",
+    appId: "1:76258426177:web:335deb41d4efa8cd9435c0",
+    measurementId: "G-S9KC921TFV"
+  };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const storage = firebase.storage();
+
+    const uid = localStorage.getItem("uid");
+    if (!uid) window.location.href = "index.html";
+
+    const userRef = db.ref("users/" + uid);
+
+    userRef.once("value").then(snapshot => {
+      const data = snapshot.val();
+      document.getElementById("name").textContent = data.name;
+      document.getElementById("email").textContent = data.email;
+      document.getElementById("photo").src = data.photoURL;
+    });
+
+    function updateName() {
+      const newName = document.getElementById("newName").value;
+      if (newName.trim()) {
+        userRef.update({ name: newName });
+        document.getElementById("name").textContent = newName;
+        alert("تم تحديث الاسم");
+      }
+    }
+
+    function uploadPhoto() {
+      const file = document.getElementById("newPhoto").files[0];
+      if (!file) return alert("اختر صورة أولاً");
+
+      const filePath = `profile_photos/${uid}.jpg`;
+      const ref = storage.ref(filePath);
+
+      ref.put(file).then(() => {
+        ref.getDownloadURL().then(url => {
+          userRef.update({ photoURL: url });
+          document.getElementById("photo").src = url;
+          alert("تم تحديث الصورة");
+        });
+      }).catch(error => {
+        console.error("خطأ في تحميل الصورة:", error.message);
+      });
+    }
+
+    function logout() {
+      localStorage.removeItem("uid");
+      window.location.href = "index.html";
+    }
+  </script>
+
+</body>
+</html>
